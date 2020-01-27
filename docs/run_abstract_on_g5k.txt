@@ -1,0 +1,27 @@
+1) add, for each node you use, their name and ip in /etc/hosts
+   $ while read line; do ADDR=$(nslookup $line | grep -A1 '^Name'  | tail -n 1 | awk '{print $2}'); HOST=$line; CHOST=$(echo $line | sed 's/^\(.\+\)\..\+\.grid5000\.fr/\1/'); echo -e "$ADDR\t$HOST\t$CHOST"; done < ~/nodes | sudo tee -a /etc/hosts
+   $ while read line; do scp /etc/hosts root@$line:/etc/; done < ~/nodes
+
+2) modify the network configuration of the system
+   $ while read line; do ssh -n $line "sudo sysctl -p BFT/scripts/sysctl.conf"; done < ~/nodes 
+
+3) download the latest version of robust_abstract
+
+4) create the configuration
+   $ cd ~/BFT/config_private
+   $ vim gen_conf.pl
+      you need to modify the following arrays: @replicas, @replicas_ip, @clients, @clients_ip
+   $ perl gen_conf.pl -f 1 -rep 4 -cli <numClientMachines> -numclients <numClients> -pki
+   $ while read line; do HOST=$line; CHOST=$(echo $line | sed 's/^\(.\+\)\..\+\.grid5000\.fr/\1/'); ln -s $HOST $CHOST; ln -s $CHOST $HOST; done < ~/nodes
+
+5) modify the scripts to take into account the list of nodes (in ~/BFT/scripts) :
+   -kill.sh and ring_options.conf : NODENAMES_REGEX must allow to find the nodes;
+   -rsync_compile.sh : MACHINES must contain the list of nodes;
+   -ring_options.conf : MASTER_NAME is the node on which we launch the manager
+
+6) send the configuration on all the nodes
+   $ cd ~/BFT/scripts
+   $ ./rsync_compile.sh clean
+
+7) it is now ready!
+

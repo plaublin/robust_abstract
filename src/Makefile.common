@@ -1,0 +1,75 @@
+default_target: all
+.PHONY : default_target
+
+TOP := $(patsubst %/,%,$(dir $(lastword $(MAKEFILE_LIST))))
+
+include $(SYMBOLSPATH)
+
+MAININCLUDEDIR := $(TOP)/include
+GMPINCLUDE := -I$(TOP)/../gmp
+SFSINCLUDE := -I$(TOP)/../sfs/include
+
+# When used, COMMON_INCS must be included before SFS!
+COMMON_INCS:= -I$(TOP)/common \
+			  -I$(TOP)/protocols/common \
+			  -I$(TOP)/modular_bft
+
+PROTO_INCS := $(COMMON_INCS) \
+	        -I$(TOP)/protocols/quorum \
+			-I$(TOP)/protocols/zlight \
+			-I$(TOP)/protocols/chain  \
+			-I$(TOP)/protocols/ring   \
+			-I$(TOP)/protocols/pbft   \
+			-I$(TOP)/protocols/pbft/replica \
+			-I$(TOP)/protocols/pbft/client \
+			-I$(TOP)/protocols/aardvark
+
+INCLUDES := -I$(MAININCLUDEDIR) $(GMPINCLUDE) $(SFSINCLUDE)
+SINCS := -I/usr/include/linux -I/usr/include -I/usr/lib/gcc/i486-linux-gnu/4.3/include/ -I/usr/include/c++/4.3.3
+
+SRCPATH := $(TOP)/src
+
+# unset this if you don't want dependencies to be generated
+DEPENDENCIES := -MMD
+
+DEFINES := -DDO_TIMINGS -DDO_TIMINGS_TICKS -DDEBUG -DRECOVERY
+
+DEBUG_FLAGS := -Wall -g -ggdb
+C_OPT_FLAGS   := -O3 -march=native -fomit-frame-pointer -mpreferred-stack-boundary=4 -minline-all-stringops -m32 -L/usr/lib32
+#C_OPT_FLAGS   := -O0 -march=native -fno-omit-frame-pointer -m32 -L/usr/lib32
+CXX_OPT_FLAGS   := $(C_OPT_FLAGS) -fpermissive
+
+CFLAGS ?= $(C_OPT_FLAGS) -Wall $(DEBUG_FLAGS) $(DEPENDENCIES) $(DEFINES) $(INCLUDES)
+CFLAGSP ?= $(CFLAGS) -I$(MAININCLUDEDIR)
+
+CXXFLAGS ?= $(CXX_OPT_FLAGS) -Wno-non-template-friend $(DEBUG_FLAGS) $(DEPENDENCIES) $(DEFINES) $(INCLUDES)
+CPPFLAGS ?= $(CXXFLAGS)
+
+LIBDIRS:=-L$(TOP)/../gmp -L$(TOP)/../sfs/lib/sfslite
+LIBS ?= -lzmq -lconfig
+
+AR:=ar
+RANLIB:=ranlib
+MAKEDEPEND:=makedepend -Y
+
+CC:=ccache g++
+C:=ccache gcc
+#CC:=gccrec g++-code-assist
+#C:=gccrec gcc-code-assist
+
+PARALLEL_MAKE=#-j 8
+
+%.o:: %.cc
+	$(CC) $(CPPFLAGS) -o $@ -c $<
+
+%.o:: %.c
+	$(C) $(CFLAGS) -o $@ -c $<
+
+
+common-clean:
+	-rm -f *.o
+	-rm -f *.d
+	-rm -f *~
+	-rm -f .maindep
+
+common-clobber: common-clean

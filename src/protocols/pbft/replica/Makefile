@@ -1,0 +1,41 @@
+include ../../../Makefile.common
+
+all: objs
+
+DEFINES += -UPBFT_DO_SWITCHING
+
+INCLUDES := -I../ $(COMMON_INCS) $(INCLUDES)
+
+
+C_FILES=\
+PBFT_R_Client.cc             PBFT_R_Replica.cc            PBFT_R_New_key.cc\
+PBFT_R_Commit.cc             PBFT_R_Message.cc            PBFT_R_Reply.cc \
+PBFT_R_Node.cc               PBFT_R_Request.cc \
+PBFT_R_Checkpoint.cc         PBFT_R_Pre_prepare.cc        PBFT_R_Req_queue.cc \
+PBFT_R_Prepare.cc            PBFT_R_Status.cc             PBFT_R_Prepared_cert.cc\
+PBFT_R_Principal.cc          PBFT_R_ITimer.cc 			PBFT_R_Time.cc \
+PBFT_R_Meta_data.cc          PBFT_R_Data.cc               PBFT_R_Fetch.cc \
+PBFT_R_Meta_data_cert.cc     PBFT_R_State.cc              PBFT_R_pbft_libbyz.cc \
+PBFT_R_View_change.cc        PBFT_R_New_view.cc           PBFT_R_View_change_ack.cc \
+PBFT_R_View_info.cc          PBFT_R_NV_info.cc            PBFT_R_Rep_info.cc \
+PBFT_R_Meta_data_d.cc        PBFT_R_Query_stable.cc       PBFT_R_Reply_stable.cc \
+PBFT_R_Stable_estimator.cc   PBFT_R_Statistics.cc \
+PBFT_R_Big_req_table.cc      PBFT_R_Pre_prepare_info.cc	PBFT_R_Panic.cc \
+PBFT_R_Abort_certificate.cc  PBFT_R_Smasher.cc 				PBFT_R_Abort.cc \
+PBFT_R_Missing.cc				  PBFT_R_Get_a_grip.cc
+
+
+c_FILES= 
+
+H_FILES := $(C_FILES:%.C=%.H)
+
+h_FILES := $(c_FILES:%.c=%.h)
+
+OBJ_FILES:=$(C_FILES:%.cc=%.o) $(c_FILES:%.c=%.o)
+
+objs: $(OBJ_FILES)
+
+clean: common-clean
+clobber: common-clobber
+
+include ../../../Makefile.common.tail

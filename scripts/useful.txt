@@ -1,0 +1,1 @@
+perl -MData::Dumper -nle '@a=split/:\s+/;push @{$h{$a[0]}},$a[1];END{local $"="\t";print "$_\t@{$h{$_}}" foreach keys %h;}' ~/times/rt-*

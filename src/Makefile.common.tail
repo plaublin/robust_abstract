@@ -1,0 +1,17 @@
+DEPS := $(OBJ_FILES:.o=.d)
+
+ifneq ($(MAKECMDGOALS),clean)
+ifneq ($(MAKECMDGOALS),clobber)
+-include $(DEPS)
+endif
+endif
+
+depend: $(DEPS)
+
+%.d: %.cc
+	$(CC) $(CPPFLAGS) -MM -o $@ -c $<
+
+%.d: %.c
+	$(C) $(CFLAGS) -MM -o $@ -c $<
+
+.PHONY: common-clean common-clobber 

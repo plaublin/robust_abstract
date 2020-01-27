@@ -1,0 +1,20 @@
+dn: dc=exper,dc=abstracts,dc=emulab,dc=net
+objectClass: dcObject
+objectClass: organizationalUnit
+dc: exper
+ou: Example Dot Com
+
+dn: cn=admin,dc=exper,dc=abstracts,dc=emulab,dc=net
+objectClass: simpleSecurityObject
+objectClass: organizationalRole
+cn: admin
+description: LDAP administrator
+userPassword: <password>
+
+dn: ou=people,dc=exper,dc=abstracts,dc=emulab,dc=net
+objectClass: organizationalUnit
+ou: people
+
+dn: ou=groups,dc=exper,dc=abstracts,dc=emulab,dc=net
+objectClass: organizationalUnit
+ou: groups

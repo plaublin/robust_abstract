@@ -1,0 +1,11 @@
+*~
+*.[ao]
+*.l[ao]
+*.in
+*.m4
+.deps/
+.libs/
+cscope*
+*.patch
+sfslite-1.2/
+./config_private/config_*

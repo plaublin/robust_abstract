@@ -1,0 +1,3 @@
+#!/bin/bash
+
+valgrind --tool=memcheck --leak-check=full --error-limit=no --log-file=valgrind_replica_$(hostname).log ./server $@

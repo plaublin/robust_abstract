@@ -1,0 +1,5 @@
+
+In order to make multicast properly work on Emulab, one needs to do the following:
+- install mrouted (there is a repo on github, recommended)
+- disable rp_filter using sysctl
+- use IP_MULTICAST_IF to bind to local interface, not to control network.
